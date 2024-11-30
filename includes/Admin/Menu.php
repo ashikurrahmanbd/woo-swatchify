@@ -35,66 +35,34 @@ class Menu{
         echo "<br />";
 
 
-        function get_global_attribute_info( $attribute_id ) {
-            // Convert the attribute ID to the taxonomy name
-            $taxonomy = wc_attribute_taxonomy_name_by_id( $attribute_id );
-        
-            // Check if the taxonomy exists
-            if ( ! taxonomy_exists( $taxonomy ) ) {
-                return __( 'Invalid attribute ID.', 'woocommerce' );
-            }
-        
-            // Fetch the attribute information from the WooCommerce attribute table
-            global $wpdb;
-            $attribute_table = $wpdb->prefix . 'woocommerce_attribute_taxonomies';
-            $attribute_data = $wpdb->get_row(
-                $wpdb->prepare(
-                    "SELECT * FROM {$attribute_table} WHERE attribute_id = %d",
-                    $attribute_id
-                )
-            );
-        
-            if ( ! $attribute_data ) {
-                return __( 'Attribute not found.', 'woocommerce' );
-            }
-        
-            // Get terms for the attribute (if any)
-            $terms = get_terms( [
-                'taxonomy'   => $taxonomy,
-                'hide_empty' => false, // Set to true if you only want terms that are in use
-            ] );
-        
-            // Fetch custom meta fields (if available)
-            $custom_meta = [];
-            if ( function_exists( 'get_term_meta' ) ) {
-                foreach ( $terms as $term ) {
-                    $term_meta = get_term_meta( $term->term_id ); // Fetch all meta for the term
-                    $custom_meta[ $term->term_id ] = $term_meta;
-                }
-            }
-        
-            // Return all gathered data
-            return [
-                'attribute_name'   => $attribute_data->attribute_name,
-                'attribute_slug'   => $taxonomy,
-                'attribute_label'  => $attribute_data->attribute_label,
-                'attribute_type'   => $attribute_data->attribute_type,
-                'terms'            => $terms, // Term objects
-                'custom_meta'      => $custom_meta, // Meta fields
-            ];
-        }
-        
-        // Example usage
-        $attribute_id = 2; // Replace with your attribute ID
-        $attribute_info = get_global_attribute_info( $attribute_id );
-        
-        if ( is_array( $attribute_info ) ) {
-            echo '<pre>';
-            print_r( $attribute_info );
-            echo '</pre>';
+        $taxonomy = 'pa_color'; // Your taxonomy
+        $term_id = 23;          // Term ID
+
+        // Get the term object
+        $term = get_term( $term_id, $taxonomy );
+
+        if ( ! is_wp_error( $term ) && $term ) {
+            // Basic term information
+            $term_name = $term->name;      // Term name
+            $term_slug = $term->slug;      // Term slug
+            $term_desc = $term->description; // Term description
+
+            // Fetch custom metadata
+            $term_color = get_term_meta( $term_id, 'swatchify_term_color', true ); // Get the color meta
+
+            // Output the data
+            echo 'Term Name: ' . esc_html( $term_name ) . '<br>';
+            echo 'Term Slug: ' . esc_html( $term_slug ) . '<br>';
+            echo 'Term Description: ' . esc_html( $term_desc ) . '<br>';
+            echo 'Custom Color Meta: ' . esc_html( $term_color ) . '<br>';
         } else {
-            echo esc_html( $attribute_info ); // Displays an error message
+            echo 'Error retrieving term information.';
         }
+                
+        
+            
+        
+       
 
 
 

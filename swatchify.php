@@ -125,8 +125,6 @@ final class Pxls_Swatchify{
 
     }
 
-
-
 }
 
 /**

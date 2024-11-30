@@ -1,10 +1,5 @@
 <?php
 
-
-
-
-
-
 /**
  * Requiring the WooCommerce Plugin
 */
@@ -122,73 +117,47 @@ add_action( 'woocommerce_attribute_updated', 'save_wc_attribute_my_field', 10, 2
 
 
 //step 3
-function add_color_picker_to_terms( $term, $taxonomy ) {
-
+// Dynamically add custom fields to the "Add New Term" form
+function add_custom_field_to_terms( $taxonomy ) {
+    // Check if the taxonomy is a product attribute taxonomy (pa_* like pa_color, pa_size)
     if ( strpos( $taxonomy, 'pa_' ) === 0 ) {
-        // Get the attribute ID from the taxonomy name
-        $attribute_id = wc_attribute_taxonomy_id_by_name( $taxonomy );
+        
+        // Get the taxonomy name from the URL, remove the 'pa_' prefix
+        $taxonomy_name = substr( $taxonomy, 3 ); // Removes 'pa_' from 'pa_color' -> 'color'
 
-        // Retrieve the swatch type from taxonomy meta
-        $swatch_type = get_term_meta( $attribute_id, 'swatchify_swatch_type', true );
+        ?>
+        <div class="form-field">
+            <label for="swatchify_term_color"><?php _e( 'Select Color ' . ucfirst( $taxonomy_name ), 'swatchify' ); ?></label>
 
-        if ( $swatch_type === 'color' ) {
-            $color = get_term_meta( $term->term_id, 'swatchify_color', true );
-            ?>
-            <tr class="form-field">
-                <th scope="row">
-                    <label for="swatchify_color"><?php _e( 'Swatch Color', 'swatchify' ); ?></label>
-                </th>
-                <td>
-                    <input type="color" name="swatchify_color" id="swatchify_color" value="<?php echo esc_attr( $color ); ?>">
-                </td>
-            </tr>
-            <?php
-        }
+            <input type="color" name="swatchify_term_color" id="swatchify_term_color" />
+            
+        </div>
+        <?php
     }
 }
-add_action( 'edit_term_form_fields', 'add_color_picker_to_terms', 10, 2 );
-add_action( 'pa_colorr_edit_form_fields', 'add_color_picker_to_terms', 10, 2 );
+
+// Dynamically hook into the "Add New Term" form for product attributes (pa_* taxonomy)
+if ( isset( $_GET['taxonomy'] ) && strpos( $_GET['taxonomy'], 'pa_' ) === 0 ) {
+    // Dynamically use the taxonomy name in the hook
+    add_action( $_GET['taxonomy'] . '_add_form_fields', 'add_custom_field_to_terms' ); 
+
+}
 
 
 //step 4
-function save_color_picker_to_terms( $term_id, $taxonomy ) {
+//Save the custom field as term metadata
+function save_custom_field_to_terms( $term_id, $taxonomy ) {
 
-    if ( isset( $_POST['swatchify_color'] ) && strpos( $taxonomy, 'pa_' ) === 0 ) {
-        $color = sanitize_hex_color( $_POST['swatchify_color'] );
-        update_term_meta( $term_id, 'swatchify_color', $color );
-    }
-}
-add_action( 'edited_term', 'save_color_picker_to_terms', 10, 2 );
-add_action( 'create_term', 'save_color_picker_to_terms', 10, 2 );
-
-
-
-//step 5
-function render_swatchify_variation_swatch( $term, $taxonomy ) {
-
+    // Check if the taxonomy is a product attribute
     if ( strpos( $taxonomy, 'pa_' ) === 0 ) {
-        // Get the attribute ID from the taxonomy name
-        $attribute_id = wc_attribute_taxonomy_id_by_name( $taxonomy );
+        // Save the color field value if it's set
+        if ( isset( $_POST['swatchify_term_color'] ) ) {
 
-        // Retrieve the swatch type from taxonomy meta
-        $swatch_type = get_term_meta( $attribute_id, 'swatchify_swatch_type', true );
-
-        if ( $swatch_type === 'color' ) {
-
-            $color = get_term_meta( $term->term_id, 'swatchify_color', true );
-            echo '<span class="swatchify-color-swatch" style="background-color: ' . esc_attr( $color ) . ';"></span>';
-
-        } elseif ( $swatch_type === 'button' ) {
-
-            echo '<button class="swatchify-button-swatch">' . esc_html( $term->name ) . '</button>';
-
-        } elseif ( $swatch_type === 'radio' ) {
-
-            echo '<label class="swatchify-radio-swatch"><input type="radio" name="swatch" value="' . esc_attr( $term->slug ) . '">' . esc_html( $term->name ) . '</label>';
+            $color_value = sanitize_hex_color( $_POST['swatchify_term_color'] );
+            update_term_meta( $term_id, 'swatchify_term_color', $color_value );
 
         }
     }
 
 }
-add_action( 'woocommerce_after_shop_loop_item_title', 'render_swatchify_variation_swatch', 10, 2 );
-
+add_action( 'create_term', 'save_custom_field_to_terms', 10, 2 );
