@@ -1,0 +1,19 @@
+{
+    "name": "proashik012/swatchify",
+    "description": "A profesional WooCommerce Variation Swatches plugin",
+    "type": "wordpress-plugin",
+    "license": "proprietary",
+    "autoload": {
+        "psr-4": {
+            "PXLS\\Swatchify\\": "includes/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Ashikur Rahman",
+            "email": "proashik012@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
