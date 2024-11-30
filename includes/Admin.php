@@ -8,6 +8,11 @@ class Admin{
 
         new Admin\Menu();
 
+        new Assets\EnqueueAssets();
+
+        new Admin\SwatchTypes();
+
+        
     }
 
 

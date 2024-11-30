@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Swatchify for WooCommerce
+ * Plugin Name: Swatchify WooCommerce Variation Swatches
  * Author: Ashikur Rahman
  * Author URI: https://github.com/ashikurrahmanbd
  * Description: A professional WooCommerce variation swatches plugin to show the attributes in a beautiful way
@@ -11,10 +11,6 @@
  * Domain Path: /languages
  * Requires at least: 5.0
  * Requires PHP: 7.0
- * WC requires at least: 4.0
- * WC tested up to: 8.0
- * 
- * 
  */
 
 if ( !defined('ABSPATH' ) ) {
@@ -24,18 +20,10 @@ if ( !defined('ABSPATH' ) ) {
 }
 
 /**
- * Check if the woocommece is not active
- */
-if ( ! in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
+ * General Functions
+*/
+require_once __DIR__ . '/includes/functions.php';
 
-    add_action( 'admin_notices', function() {
-
-        echo '<div class="error"><p><strong>Swatchify for WooCommerce</strong> requires WooCommerce to be installed and activated.</p></div>';
-
-    } );
-    
-    return;
-}
 
 /**
  * Load the Autoloader
