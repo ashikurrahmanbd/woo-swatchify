@@ -7,13 +7,34 @@
  * Tags: woocommerce, variation swatches, color swatches, size swatches, text swatches
  * Version: 1.0
  * License: GPLv2 or later
- * Text Domain: swatchify 
-*/
+ * Text Domain: swatchify
+ * Domain Path: /languages
+ * Requires at least: 5.0
+ * Requires PHP: 7.0
+ * WC requires at least: 4.0
+ * WC tested up to: 8.0
+ * 
+ * 
+ */
 
 if ( !defined('ABSPATH' ) ) {
 
     exit;
 
+}
+
+/**
+ * Check if the woocommece is not active
+ */
+if ( ! in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
+
+    add_action( 'admin_notices', function() {
+
+        echo '<div class="error"><p><strong>Swatchify for WooCommerce</strong> requires WooCommerce to be installed and activated.</p></div>';
+
+    } );
+    
+    return;
 }
 
 /**
@@ -105,6 +126,7 @@ final class Pxls_Swatchify{
         if ( is_admin(  ) ) {
 
             //load admin dependenceis
+            new PXLS\Swatchify\Admin();
 
         }else{
 
