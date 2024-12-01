@@ -34,36 +34,34 @@ class Menu{
 
         echo "<br />";
 
+        if( has_filter( 'woocommerce_attribute_table_columns' ) ){
 
-        $taxonomy = 'pa_color'; // Your taxonomy
-        $term_id = 23;          // Term ID
+            echo "hook ache";
 
-        // Get the term object
-        $term = get_term( $term_id, $taxonomy );
-
-        if ( ! is_wp_error( $term ) && $term ) {
-            // Basic term information
-            $term_name = $term->name;      // Term name
-            $term_slug = $term->slug;      // Term slug
-            $term_desc = $term->description; // Term description
-
-            // Fetch custom metadata
-            $term_color = get_term_meta( $term_id, 'swatchify_term_color', true ); // Get the color meta
-
-            // Output the data
-            echo 'Term Name: ' . esc_html( $term_name ) . '<br>';
-            echo 'Term Slug: ' . esc_html( $term_slug ) . '<br>';
-            echo 'Term Description: ' . esc_html( $term_desc ) . '<br>';
-            echo 'Custom Color Meta: ' . esc_html( $term_color ) . '<br>';
-        } else {
-            echo 'Error retrieving term information.';
         }
-                
-        
-            
-        
-       
 
+
+        function get_taxonomy_object( $taxonomy ) {
+            $taxonomy_object = get_taxonomy( $taxonomy );
+            
+            if ( $taxonomy_object ) {
+                return $taxonomy_object;  // Returns the full taxonomy object
+            }
+            
+            return null;  // Return null if no taxonomy is found
+        }
+        
+        
+
+
+        $term_meta = get_term_meta( 29, 'swatchify_swatch_type', true );
+
+        $term_name = wc_attribute_taxonomy_id_by_name('pa_color');
+
+        echo $term_name;
+
+
+    
 
 
         ?>

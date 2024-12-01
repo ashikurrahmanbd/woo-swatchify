@@ -12,6 +12,8 @@ class Admin{
 
         new Admin\SwatchTypes();
 
+        new Admin\SwatchTermField();
+
         
     }
 

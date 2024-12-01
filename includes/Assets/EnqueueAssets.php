@@ -12,7 +12,8 @@ class EnqueueAssets{
 
     public function swatchify_enqueue_assets(){
 
-        wp_enqueue_script( 
+        //register script
+        wp_register_script( 
 
             'swatchify-admin-script', 
             PXLS_SWATCHIFY_ASSETS . '/admin/js/admin-script.js', 
@@ -21,6 +22,21 @@ class EnqueueAssets{
             true,
 
         );
+
+        //register style
+        wp_register_style( 
+            'swatchify-admin-style', 
+            PXLS_SWATCHIFY_ASSETS . '/admin/css/admin-style.css', 
+            [], 
+            filemtime(__FILE__), 
+    
+        );
+
+        
+
+        wp_enqueue_style('swatchify-admin-style');
+        wp_enqueue_script('swatchify-admin-script');
+        
 
 
     }
