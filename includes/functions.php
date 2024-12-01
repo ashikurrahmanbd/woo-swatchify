@@ -67,28 +67,10 @@ add_filter( 'woocommerce_container_features', function( $features ) {
 
 
 
-add_filter('woocommerce_attribute_table_columns', 'add_custom_attribute_table_column');
 
 
 
-function add_custom_attribute_table_column($columns) {
-    // Add a custom column
-    $columns['custom_column'] = __('Custom Column', 'your-text-domain');
 
-    return $columns;
-
-}
-
-// Populate content for the custom column
-add_action('woocommerce_attribute_table_custom_column', 'populate_custom_attribute_table_column', 10, 3);
-
-function populate_custom_attribute_table_column($column_name, $attribute, $context) {
-    if ('custom_column' === $column_name) {
-        // Example: Show a custom message or data related to the attribute
-        $attribute_slug = $attribute->attribute_name; // Get attribute slug
-        echo 'Custom Data for ' . esc_html($attribute_slug);
-    }
-}
 
 
 
@@ -116,7 +98,15 @@ function populate_custom_attribute_table_column($column_name, $attribute, $conte
 // }
 // add_action( 'create_term', 'save_custom_field_to_terms', 10, 2 );
 
+/*
+add_action( 'pre_get_terms', function ( $query ) {
+    if ( isset( $_GET['orderby'] ) && $_GET['orderby'] === 'swatchify_term_color' ) {
+        $query->set( 'meta_key', 'swatchify_term_color_value' ); // Replace with your meta key
+        $query->set( 'orderby', 'meta_value' );
+    }
+} );
 
+*/
 
 
 

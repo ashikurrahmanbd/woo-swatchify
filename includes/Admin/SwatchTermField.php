@@ -20,6 +20,27 @@ class SwatchTermField{
 
 
 
+        //adding custom column
+        if ( isset( $_GET['taxonomy'] ) && strpos( $_GET['taxonomy'], 'pa_' ) === 0 ) {
+
+            add_action( 'manage_edit-'.$_GET['taxonomy'] . '_columns', [$this, 'add_custom_column'] );
+            
+        }
+
+        //sortable column
+        if ( isset( $_GET['taxonomy'] ) && strpos( $_GET['taxonomy'], 'pa_' ) === 0 ) {
+
+            add_action( 'manage_edit-'.$_GET['taxonomy'] . '_sortable_columns', [$this, 'make_column_sortable'] );
+            
+        }
+
+        //column content
+        if ( isset( $_GET['taxonomy'] ) && strpos( $_GET['taxonomy'], 'pa_' ) === 0 ) {
+
+            add_action( 'manage_'.$_GET['taxonomy'] . '_custom_column', [$this, 'add_column_content'], 10, 3 );
+            
+        }
+
     }
 
 
@@ -42,7 +63,9 @@ class SwatchTermField{
 
                 ?>
                 <div class="form-field">
-                    <label for="swatchify_term_color"><?php _e( 'Select Color', 'swatchify' ); ?></label>
+                    <label for="swatchify_term_color">
+                        <?php _e( 'Select Color', 'swatchify' ); ?>
+                    </label>
                     <input type="color" name="swatchify_term_color" id="swatchify_term_color" />
                     
                 </div>
@@ -67,9 +90,6 @@ class SwatchTermField{
     }
     
 
-
-
-
     /**
      * Term Field Save
     */
@@ -90,6 +110,55 @@ class SwatchTermField{
             }
         }
 
+    }
+
+    /**
+     * Add a custom column to the terms table
+     */
+    public function add_custom_column( $columns ) {
+
+        $taxonomy = isset( $_GET['taxonomy'] ) ? sanitize_text_field( $_GET['taxonomy'] ) : '';
+
+        if ( $taxonomy ) {
+            $taxonomy_id = wc_attribute_taxonomy_id_by_name( $taxonomy );
+            $swatch_type = get_term_meta( $taxonomy_id, 'swatchify_swatch_type', true );
+
+            if ( $swatch_type === 'color' ) {
+                // Insert the custom column after the "Name" column
+                $new_columns = [];
+                foreach ( $columns as $key => $title ) {
+                    $new_columns[$key] = $title;
+                    if ( $key === 'name' ) { // Add after "Name" column
+                        $new_columns['swatchify_term_color'] = __( 'Color', 'swatchify' );
+                    }
+                }
+                return $new_columns;
+            }
+        }
+
+        return $columns;
+        
+        
+    }
+
+    // Make the custom column sortable
+    public function make_column_sortable( $sortable_columns ) {
+
+        // Set the column key for sorting
+        $sortable_columns['swatchify_term_color'] = 'swatchify_term_color';
+        return $sortable_columns;
+
+    }
+
+    // Add data to the custom column
+    public function add_column_content( $content, $column_name, $term_id ) {
+
+        if ( $column_name === 'swatchify_term_color' ) {
+
+            return $term_id;
+        }
+
+        return $content;
     }
     
     
